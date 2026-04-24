@@ -1,0 +1,6 @@
+SERVER = r'DESKTOP-ACIIC93\SQLEXPRESS'
+DATABASE = 'BookRentalStore'
+USERNAME = 'tin_nguyen'
+PASSWORD = '123456'
+DRIVER = 'ODBC Driver 17 for SQL Server'
+
