@@ -2,14 +2,14 @@ from db import fetch_all, fetch_one
 
 def count_rented_books():
     query = """
-        select count(*) from TotalRented from Books
+        select count(*) as TotalRented from Books
         where BookStatus = 'Rented'
     """
     return fetch_one(query)
 
 def count_available_books():
     query = """
-        select count(*) from TotalRented from Books 
+        select count(*) as TotalAvailable from Books 
         where BookStatus = 'Available'
     """
     return fetch_one(query)

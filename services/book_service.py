@@ -29,12 +29,12 @@ def search_books(keyword):
     like_keyword = f'%{keyword}%'
     return fetch_all(query,(like_keyword, like_keyword, like_keyword, like_keyword))
 
-def add_book (book_code, title, category, publisher, publish_year, book_status = "Available"):
+def add_book (book_code, title, author, category, publisher, publish_year, book_status = "Available"):
     query = """
             insert into Books (BookCode, Title, Author, Category, Publisher, PublishYear, BookStatus)
-            value (?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?)
 """
-    params = (book_code, title, category, publisher, publish_year, book_status)
+    params = (book_code, title, author, category, publisher, publish_year, book_status)
     return execute_query(query,params)
 
 def update_book (book_code, title, author, category, publisher, publish_year):

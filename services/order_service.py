@@ -2,7 +2,7 @@ from db import fetch_all, fetch_one, get_connection, execute_query
 from datetime import datetime
 def generate_order_code():
     query = """
-        SELECT TOP 1 OderID from RentalOrders
+        SELECT TOP 1 OrderID from RentalOrders
         ORDER BY OrderID DESC
     """
     row = fetch_one(query)
@@ -116,7 +116,6 @@ def create_rental_order(customer_code, book_codes, expected_return_date):
     try:
         cursor = conn.cursor()
         # Bắt đầu transaction
-        cursor.execute("BEGIN TRANSACTION")
         
         insert_order_query = """
             INSERT INTO RentalOrders (OrderCode, CustomerID, RentDate, ExpectedReturnDate, ReturnDate, OrderStatus)
@@ -129,7 +128,7 @@ def create_rental_order(customer_code, book_codes, expected_return_date):
         order_row = cursor.fetchone()
 
         if not order_row:
-            cursor.execute("ROLLBACK")
+            conn.rollback()
             conn.close()
             return False, "Tạo đơn thuê thất bại."
 
@@ -148,12 +147,12 @@ def create_rental_order(customer_code, book_codes, expected_return_date):
                 (book.BookID,)
             )
 
-        cursor.execute("COMMIT")
+        conn.commit()
         conn.close()
         return True, f'Tạo đơn thuê thành công. Mã đơn: {order_code}'
 
     except Exception as e:
-        cursor.execute("ROLLBACK")
+        conn.rollback()
         conn.close()
         return False, f"Lỗi khi tạo đơn thuê: {e}"
 
@@ -178,7 +177,6 @@ def return_rental_order (order_code):
     try:
         cursor = conn.cursor()
         # Bắt đầu transaction
-        cursor.execute("BEGIN TRANSACTION")
         
         # cập nhật trạng thái đơn thành "Returned"
         cursor.execute(
@@ -201,11 +199,11 @@ def return_rental_order (order_code):
             )
         """, (order_code,))
 
-        cursor.execute("COMMIT")
+        conn.commit()
         conn.close()
         return True, "Trả sách thành công."
         
     except Exception as e:
-        cursor.execute("ROLLBACK")
+        conn.rollback()
         conn.close()
         return False, f"Lỗi khi ghi nhận trả sách: {e}"
